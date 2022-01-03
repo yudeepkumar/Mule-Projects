@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<configuration doc:name="Configuration" doc:id="8d233356-7716-45ee-9976-d414d1aa5165" defaultErrorHandler-ref="GLOBALASSESMENTError_Handler" />
+	<error-handler name="GLOBALASSESMENTError_Handler" doc:id="e9546259-e7d3-4498-9d0a-50ae3628ff52" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="ab0dbcd1-dd66-4f2a-a834-583fb0151ef2" type="ANY">
+			<ee:transform doc:name="Transform Message" doc:id="c7538268-9fe0-4a64-bfe2-b76adc15582e" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message":"errorpropagate"
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+	</error-handler>
+</mule>

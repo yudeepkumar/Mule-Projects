@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="456f208e-0833-4a69-9dea-19f3a08e352c" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="aeb2646b-15fb-4dbc-a97f-08211261b36f" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="root" database="account_holder" />
+	</db:config>
+	<flow name="insertFlow" doc:id="f0efe8d1-28ad-4784-bd42-9a7c96fec1b8" >
+		<http:listener doc:name="Listener" doc:id="2f6c9d2d-ed73-4c6c-8804-cb0983e838f3" config-ref="HTTP_Listener_config" path="/insert"/>
+		<db:insert doc:name="Insert" doc:id="00d5390a-e026-4ba9-8c03-e2c098c437d8" config-ref="Database_Config">
+			<db:sql ><![CDATA[insert into account_holder.information (accno,name,mobile,address) values (111,"yudeep",777,"cg")]]></db:sql>
+		</db:insert>
+	</flow>
+</mule>

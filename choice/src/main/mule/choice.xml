@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="e3c78c90-8836-4003-99ca-9ee5ed3bb8b3" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="choiceFlow" doc:id="068710db-0294-426f-8746-44cc469296bf" >
+		<http:listener doc:name="Listener" doc:id="695dd4c6-f3f1-4dca-aa00-2ec009e78130" config-ref="HTTP_Listener_config" path="/choice"/>
+		<logger level="INFO" doc:name="Logger" doc:id="fcce0ea5-f5fb-4b38-be13-19155f228f39" message="#[payload]"/>
+		<choice doc:name="Choice" doc:id="671f1c50-a3fa-42a0-ae43-9dad8b7df1da" >
+			<when expression='#[payload."operation"=="ADD"]'>
+				<ee:transform doc:name="Transform Message" doc:id="182dd032-c306-4e02-8b6a-0fe941eef7bf" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"result": payload.q1 + payload.q2
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<when expression='#[payload."operation"=="SUB"]'>
+				<ee:transform doc:name="Transform Message" doc:id="6a1e913f-47a9-4040-8600-28e0e486549b" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"result": payload.q1 - payload.q2
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<when expression='#[payload."operation"=="MUL"]'>
+				<ee:transform doc:name="Transform Message" doc:id="5fa26fc0-d7b9-47ce-94a5-d2f3ecbce8af" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"result": payload.q1 * payload.q2
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<when expression='#[payload."operation"=="DIV"]'>
+				<ee:transform doc:name="Transform Message" doc:id="4376c6e7-59ed-4085-8648-a7a5a6f68893" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"result": payload.q1 / payload.q2
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="9dec2703-7aa6-4dd5-8f44-b8bb792dd40f" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message":"not definate formate"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+	</flow>
+</mule>

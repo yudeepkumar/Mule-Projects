@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="6f57f831-94fa-4d29-b3c0-e5e45f7fefe9" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="error_handaling_tryFlow" doc:id="4d1b8461-a72a-49ec-b744-8e976aa3ce8f" >
+		<http:listener doc:name="Listener" doc:id="2f17f9b8-47e5-4536-a244-0be5dc4d9cc3" config-ref="HTTP_Listener_config" path="/try"/>
+		<set-payload value="#[5000]" doc:name="Set Payload" doc:id="221ba4a1-61bb-49a2-ae66-91b97cd16458" />
+		<try doc:name="Try" doc:id="da10325f-a38a-4a59-9fd7-5b53587c04d8" >
+			<validation:is-number doc:name="Is number" doc:id="545ce658-0898-4187-9dc0-ccca874bf8c3" value="5000" minValue="1" maxValue="4000" numberType="INTEGER"/>
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b94d9532-98c6-4056-a632-20e0ad4de5cf" type="VALIDATION:INVALID_NUMBER">
+					<set-payload value='#["not valid number"]' doc:name="Set Payload" doc:id="556a7aa5-6f84-4a8d-b022-439a23190d85" />
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<ee:transform doc:name="Transform Message" doc:id="c426aae5-35bd-4fc2-b7de-2224f96f12af" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
