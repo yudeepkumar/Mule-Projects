@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="5075dd74-cf07-4c20-98cb-51e3c5d6b0fd" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<configuration doc:name="Configuration" doc:id="34924842-836c-475e-8349-b85a58d488f6" defaultErrorHandler-ref="globleerrorError_Handler" />
+	<flow name="global_errorFlow" doc:id="d9fe33fc-5cc4-434a-bf82-8ee02c4a8eb6" >
+		<http:listener doc:name="Listener" doc:id="447b330e-0f00-41eb-8315-53e00bf98f1a" config-ref="HTTP_Listener_config" path="/global"/>
+		<choice doc:name="Choice" doc:id="2262e4bc-8d40-4baf-ab5e-707da09771fb" >
+			<when expression="#[isEmpty(payload)]">
+				<raise-error doc:name="Raise error" doc:id="2afb6067-ee13-4ab6-af10-edd023f28b5b" type="NO:PAYLOAD" description="NO:PAYLOAD"/>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="be36a6ad-3363-49a1-b565-9ed166da6793" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message":"result is good"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+	</flow>
+</mule>

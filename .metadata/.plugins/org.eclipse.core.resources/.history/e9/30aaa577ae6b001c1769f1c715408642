@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="fab2054c-cfc1-4334-bfb4-f1a659c99fbd" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<file:config name="File_read" doc:name="File Config" doc:id="4afd6f54-d79a-4e12-8891-b3f859f5c1b6" >
+		<file:connection workingDir="C:\Users\yudeepk\Desktop\file" />
+	</file:config>
+	<file:config name="File_write" doc:name="File Config" doc:id="48e74dfd-eb0c-47b9-9e0f-0392c8a691b4" >
+		<file:connection workingDir="C:\Users\yudeepk\Desktop\file" />
+	</file:config>
+	<flow name="file_readFlow" doc:id="22055084-dca7-405e-8858-bbec5ae96435" >
+		<http:listener doc:name="Listener" doc:id="b4e5c397-196c-4203-8ae4-569fe467914d" config-ref="HTTP_Listener_config" path="/read"/>
+		<file:read doc:name="Read" doc:id="fa76e600-be21-4552-8943-ad2de9f4dfe0" config-ref="File_read" path="C:\Users\yudeepk\Desktop\file\New Text Document.txt" target="read1">
+			<ee:repeatable-file-store-stream bufferUnit="MB" />
+		</file:read>
+		<ee:transform doc:name="Transform Message" doc:id="5edede3f-6dfd-46b7-b19f-1d76fa18c0f9" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message":vars.read1
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<file:write doc:name="Write" doc:id="e0c64b9f-506e-44c5-96d0-460f3d31b180" config-ref="File_write" path="C:\Users\yudeepk\Desktop\file\New Text Document.txt"/>
+		<logger level="INFO" doc:name="Logger" doc:id="c9d04616-32f4-44f3-be6d-cb1b37bbc6fc" message="#[payload]"/>
+	</flow>
+</mule>

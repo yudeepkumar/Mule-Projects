@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="81e55384-f769-4252-ab4f-e39e232361f0" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="48204d35-ce8a-4cdc-983f-9da4da03dc9f" >
+		<http:request-connection host="http://calculator-webservice.mybluemix.net/calculator?wsd" />
+	</http:request-config>
+	<flow name="errorFlow" doc:id="f9d9e101-09e3-4376-a8d0-2bd2e6f883c1" >
+		<http:listener doc:name="Listener" doc:id="f33a9018-c1f3-42fc-9b37-e19a2af23e50" config-ref="HTTP_Listener_config" path="/error"/>
+		<set-payload value='#["main flow"]' doc:name="Set Payload" doc:id="675ae388-f70b-4760-b1ca-25ea02851543" />
+		<http:request method="GET" doc:name="Request" doc:id="cf5b119a-fbd4-4d5d-9c91-5a0e51bfcbae" path="/hgfdafgghtrsd" config-ref="HTTP_Request_configuration"/>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b0b51053-af51-4967-bea4-e60767a1aee0" type="ANY">
+				<set-payload value='#["subflow"]' doc:name="Set Payload" doc:id="a50aa089-c86c-460e-97b5-8459d2ecf686" />
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>

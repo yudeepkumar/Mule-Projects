@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="56f49064-cb6f-4ff7-b752-83c4ee212013" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<validation:config name="Validation_Config" doc:name="Validation Config" doc:id="485db968-13b2-4010-8179-8ff02c07ebb0" />
+	<flow name="global11Flow" doc:id="257cc6e8-25c1-4690-88b2-18f8433ffa35" >
+		<http:listener doc:name="Listener" doc:id="257bcb6d-bb32-42ba-94c2-c2983b2f27b5" config-ref="HTTP_Listener_config" path="/path"/>
+		<set-payload value='#[50000]' doc:name="Set Payload" doc:id="d4b44aa4-1bd6-478e-a4fc-2ff77b942ed9" />
+		<validation:is-number numberType="INTEGER" doc:name="Is number" doc:id="4460ce82-f59b-4022-b96b-8507e249c3e1" minValue="1999" maxValue="9999999" config-ref="Validation_Config"/>
+		<ee:transform doc:name="Transform Message" doc:id="d0f3b504-66dc-49ae-88a2-f16c76b9624a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message":"yes"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="b37653f4-e76d-4578-959a-f52a03d5f346" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="d1bb10aa-cbb9-44f8-9e7b-510438925bce" >
+		<http:request-connection host="http://calculator-webservice.mybluemix.net/calculator?wsd" />
+	</http:request-config>
+	<flow name="errorbasedonpropagateFlow" doc:id="ae096d82-b3d7-4ee1-8ee0-09b54d5bd83f" >
+		<http:listener doc:name="Listener" doc:id="13605b70-c99b-4038-ba3e-dc6c9c72dbf2" config-ref="HTTP_Listener_config" path="/propagate">
+			<http:error-response >
+				<http:body ><![CDATA[#[output text/plain --- error.errorType]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<flow-ref doc:name="Flow Reference" doc:id="be45f658-8931-4022-ab26-d6cee463ff93" name="errorbasedonpropagateFlow1"/>
+		<ee:transform doc:name="Transform Message" doc:id="23c0e0f6-8e96-4aa2-af6a-d6a5303fb16e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="errorbasedonpropagateFlow1" doc:id="44d49213-88c7-46f5-8ca6-5bebb668bb1a" >
+		<http:request method="GET" doc:name="Request" doc:id="f68cd49b-84de-4d4e-a525-682a7c00f25f" config-ref="HTTP_Request_configuration" url="buiwefhch"/>
+		<set-payload value='#["is in subflow"]' doc:name="Set Payload" doc:id="9769a3dc-054a-4427-b74e-8a5264c6318f" />
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="586e2fdf-4e7d-4792-a594-2ea3303f739f" >
+				<set-payload value='#["error"]' doc:name="Set Payload" doc:id="c9cff2da-78ac-44e6-b41f-e48e77da212c" />
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>

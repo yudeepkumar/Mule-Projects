@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="fcd4163f-f222-4475-b251-f570983c8238" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="3a1a7585-c208-47b4-9e2e-95e8dd140f9c" >
+		<http:request-connection host="http://calculator-webservice.mybluemix.net/calculator?wsd" />
+	</http:request-config>
+	<flow name="errorbasedcontinueFlow" doc:id="07f3269b-2cf8-4278-a37e-2c3405f05d63" >
+		<http:listener doc:name="Listener" doc:id="e307ad39-9a6c-4949-9ab6-f3c470e33a91" config-ref="HTTP_Listener_config" path="/continue">
+			<http:error-response >
+				<http:body ><![CDATA[#[payload]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<flow-ref doc:name="Flow Reference" doc:id="fce781c4-aebf-4067-b35e-280e5d546c2a" />
+		<ee:transform doc:name="Transform Message" doc:id="742b1ce8-7f2e-4a1e-b3a6-f07ba2e5fc75" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="errorbasedcontinueFlow1" doc:id="301a9ce6-cc44-4e35-bee2-6de4ccfd6d5e" >
+		<http:request method="GET" doc:name="Request" doc:id="02a07249-f591-47f6-b7fb-cdcc68933907" config-ref="HTTP_Request_configuration" path="uiwegduiwec"/>
+		<set-payload value='#["in subflow"]' doc:name="Set Payload" doc:id="5872d2ff-53d3-447c-8b0b-5fa78dd2bf56" />
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="2bfc0416-6078-4a0a-a296-05dd816077e8" type="ANY">
+				<set-payload value='#["error"]' doc:name="Set Payload" doc:id="2f7d9b97-8492-479f-97e9-8770eb8c7311" />
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>

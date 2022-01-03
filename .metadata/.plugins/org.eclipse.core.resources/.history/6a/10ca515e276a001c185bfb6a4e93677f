@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="248fc31d-adc4-4aca-a8ca-139aaee808ae" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="aa6d735f-e32f-45cf-a48b-4ca7c0a93e6b" >
+		<http:request-connection host="http://calculator-webservice.mybluemix.net/calculator?wsdl" />
+	</http:request-config>
+	<flow name="errorcontinueFlow" doc:id="7f683ce4-de2d-480b-94bd-5780d199dfdd" >
+		<http:listener doc:name="Listener" doc:id="57d9eb04-e577-4b05-b8b2-8b58033ec075" config-ref="HTTP_Listener_config" path="/errorcon"/>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="556a4684-c0a3-4f0b-8f29-954d43a9b43e" />
+		<flow-ref doc:name="Flow Reference" doc:id="656a3022-d700-49ff-93f1-28954b91930a" name="errorcontinueFlow1"/>
+		<ee:transform doc:name="Transform Message" doc:id="88c7c342-2ef2-4907-833f-cf1de890ff61" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message":"completed"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="errorcontinueFlow1" doc:id="4f75239c-8d22-4333-a54e-3900bde38a49" >
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="33672e9e-ebff-419c-b7be-1e2eefc3cf9a" type="HTTP:CONNECTIVITY">
+				<http:request method="GET" doc:name="Request" doc:id="2f587e76-53e8-4be9-9480-99b4fcd17a4a" config-ref="HTTP_Request_configuration" path="uigyudtfx" />
+				<ee:transform doc:name="Transform Message" doc:id="80337afd-711b-4043-9857-221fb463d61c" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	"message":"is in error continue"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>

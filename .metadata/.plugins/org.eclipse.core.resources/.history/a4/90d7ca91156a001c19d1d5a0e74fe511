@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<error-handler name="globleerrorError_Handler" doc:id="e58f2fbe-fac6-413d-bb01-1aa41884d6bd" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="0ef76797-84f9-468d-ab74-56fdf7e30bf4" type="NO:PAYLOAD">
+			<ee:transform doc:name="Transform Message" doc:id="9c63d8e6-8256-4f8a-8d59-8dd61b1cfc39" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/jSON
+---
+{
+	"MESSAGE":"OUTPUT"
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+	</error-handler>
+</mule>

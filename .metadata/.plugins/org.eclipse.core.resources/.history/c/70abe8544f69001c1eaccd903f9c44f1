@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="d1025d1c-9950-4e43-9e6b-03d4d657a209" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="d77b4f84-9822-400f-b893-66c68ef8ed4c" />
+	<http:request-config name="HTTP_Request_configuration1" doc:name="HTTP Request configuration" doc:id="54c0f2c1-08fe-4fac-83e6-1dda9cc2d1dd" >
+		<http:request-connection host="http://calculator-webservice.mybluemix.net/calculator?wsd" />
+	</http:request-config>
+	<flow name="error1Flow" doc:id="07d29704-5975-47de-a6c2-e82bbe05cb73" >
+		<http:listener doc:name="Listener" doc:id="2fc81b7e-ce0e-4b05-9017-2d68472cfade" config-ref="HTTP_Listener_config" path="/error">
+			<http:error-response >
+				<http:body ><![CDATA[#[payload]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<flow-ref doc:name="Flow Reference" doc:id="e83e93e0-43f9-4f5b-bec4-9630c202a238" name="error1Flow1"/>
+		<set-payload value='#["main flow"]' doc:name="Set Payload" doc:id="1a0c471c-71b9-42e0-9023-7f7c4744420d" />
+	</flow>
+	<flow name="error1Flow1" doc:id="eb592f05-2ba4-4247-80c5-955067f13095" >
+		<http:request method="GET" doc:name="Request" doc:id="3c8dc5bf-dd59-44fb-8f01-9d6522dee4ee" path="ugcwgckcw" config-ref="HTTP_Request_configuration1"/>
+		<set-payload value='#["subflow"]' doc:name="Set Payload" doc:id="dce292a5-64fd-4d47-a859-b40dd1b9922b" />
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="e8f26d3d-61b0-4d2d-bf46-191aa426c387" >
+				<set-payload value='#["subsubflow"]' doc:name="Set Payload" doc:id="14ba71a2-e10d-49ed-9b66-0f8dd62131a0" />
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>

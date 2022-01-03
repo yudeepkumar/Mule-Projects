@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="39fd8f76-8a3a-4b99-bfe3-5907464b16df" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<sub-flow name="flow_referenceSub_Flow" doc:id="b5109a81-1f2a-4d4b-ac16-b1960e5d41d8" >
+		<logger level="INFO" doc:name="Logger" doc:id="809a28cb-8cd8-4d6b-80e3-b21a737e0d17" message="correlationid_#[vars.correlationid]"/>
+	</sub-flow>
+	<flow name="flow_referenceFlow1" doc:id="ffac524f-8aa8-427b-b466-c575c744dafa" >
+		<logger level="INFO" doc:name="Logger" doc:id="d18f674f-9be8-4ae0-848e-dc41e09bba0c" message="correlationid_#[vars.correlationid] #[subflow]"/>
+	</flow>
+	<flow name="flow_referenceFlow" doc:id="e5182477-7a8f-48fd-88b1-2f65c9f8990f" >
+		<http:listener doc:name="Listener" doc:id="2ae3ab6c-e730-4f0e-885e-1123ad4fa230" config-ref="HTTP_Listener_config" path="/flow"/>
+		<set-variable value="uuid()" doc:name="Set Variable" doc:id="a82266fc-6ae8-40ca-9d77-232df2d8b781" variableName="correlationid"/>
+		<logger level="INFO" doc:name="Logger" doc:id="98cc3d31-c140-480c-8296-2e2559be61ef" message="correlationid"/>
+		<set-payload value="hello yudeep" doc:name="Set Payload" doc:id="293a698f-aa19-4982-8bfc-0e3ab07ed6b3" />
+		<flow-ref doc:name="Flow Reference" doc:id="712c8d89-589c-4474-ab4f-9b740f6089b6" name="flow_referenceSub_Flow"/>
+		<flow-ref doc:name="Flow Reference" doc:id="95955ddd-1ded-42a2-b3a0-c32b917a194d" name="flow_referenceFlow1"/>
+		<logger level="INFO" doc:name="Logger" doc:id="53a70e8b-7954-4e1a-9c14-6e22cebb3be9" message="correlationid_#[vars.correlationid]_#[payload]"/>
+	</flow>
+</mule>

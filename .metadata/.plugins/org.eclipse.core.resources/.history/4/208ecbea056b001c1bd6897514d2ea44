@@ -1,0 +1,7 @@
+package java_static;
+
+public class javaclass {
+	public static string getWelcomeMessage() {
+		return "hello and welcome yudeep"
+	}
+}

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="5fc3be61-1b27-476d-b536-a25e94889950" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="415d5ca0-7a2c-4a1a-9b91-39113b126a53" >
+		<http:request-connection host="https://docs.google.com/" />
+	</http:request-config>
+	<flow name="error_handaling1Flow" doc:id="50d4bb1a-0bc4-4dc8-ae02-8d92eeca4068" >
+		<http:listener doc:name="Listener" doc:id="7ca69a5b-ef2d-4443-acd5-e4040c576034" config-ref="HTTP_Listener_config" path="/path"/>
+		<flow-ref doc:name="Flow Reference" doc:id="c765bb5f-9928-4611-8fbd-f84c1740033f" name="error_handaling1Sub_Flow"/>
+		<set-payload value='#["HELLO YUDEEP"]' doc:name="Set Payload" doc:id="428fa2df-a64a-4020-a76e-59940fa15266" />
+	</flow>
+	<sub-flow name="error_handaling1Sub_Flow" doc:id="d3f878a7-2591-45b3-a6e6-a7a568e192dd" >
+		<try doc:name="Try" doc:id="1a6a2525-1a22-48a8-8745-2aa6507cae74" >
+			<http:request method="GET" doc:name="Request" doc:id="32d66afc-b3fe-4758-869a-d0bf750fef6e" config-ref="HTTP_Request_configuration" path="HFYFU"/>
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="7138b6de-0dec-4c69-bdd9-281f3989d098" type="HTTP:CONNECTIVITY">
+					<set-payload value='#["ERROR IS OCCOUR"]' doc:name="Set Payload" doc:id="fb8b4b61-3ad5-4693-870d-2c201d0e8022" />
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="a7e43cdd-b2b6-4315-a801-d97d48ef357a" />
+	</sub-flow>
+</mule>

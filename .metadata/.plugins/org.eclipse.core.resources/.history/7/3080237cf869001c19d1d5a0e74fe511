@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="c2ca7f27-49bb-413c-b888-79e054419588" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="error_handalingFlow" doc:id="534ad667-c317-4579-ae5e-8ba3a0fb9a77" >
+		<http:listener doc:name="Listener" doc:id="6dd9d3c6-2b3d-4b4d-bdd0-3d20c2eed740" config-ref="HTTP_Listener_config" path="/error"/>
+		<set-payload value='#["hello world"]' doc:name="Set Payload" doc:id="5bf0b315-3d7b-471a-a279-3204c4ebbffd" />
+		<choice doc:name="Choice" doc:id="5bb83a48-82a8-4eb4-9307-d150906f5e47" >
+			<when expression="#[isEmpty]">
+				<raise-error doc:name="Raise error" doc:id="2063b3cc-d179-4ff8-823e-6a21bb809c10" type="NO:PAYLOAD" description="no payload"/>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="21bd3c7d-e68d-4d8c-9636-d95f8f1fa842" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="35b49bc7-98a3-42f5-ab53-b2ddf8f15e01" type="NO:PAYLOAD">
+				<ee:transform doc:name="Transform Message" doc:id="394118c5-43fe-4e4d-8160-434c518aa50b" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+"error"]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>
